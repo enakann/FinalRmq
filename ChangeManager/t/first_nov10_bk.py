@@ -2,12 +2,12 @@ from multiprocessing import Process,Lock,Manager,Queue
 import multiprocessing
 from pprint import pprint
 from Pickling import Pickling
-from time import time
-from time import sleep
+ls2=[]
+
+
 
 def work2(msg,loc):
     print(multiprocessing.current_process().name)
-    sleep(5)
     loc.acquire()
     d={}
     p=Pickling("mp_picling_db")
@@ -31,16 +31,9 @@ def work2(msg,loc):
         if msg["corrid"] in pending.keys():
             pending[msg["corrid"]].append({msg["type"]:msg})
             done[msg["corrid"]]=pending.pop(msg["corrid"])
-        else:
-            done[msg["corrid"]]=[]
-            done[msg["corrid"]].append({msg["type"]:msg})
     else:
         if msg["corrid"] in pending.keys():
-            for item in pending[msg["corrid"]]:
-              if msg["type"] in item.keys():
-                  break
-            else:               
-              pending[msg["corrid"]].append({msg["type"]:msg})
+             pending[msg["corrid"]].append({msg["type"]:msg})
         else:
             pending[msg["corrid"]]=[]
             pending[msg["corrid"]].append({msg["type"]:msg})
@@ -79,24 +72,15 @@ if __name__ == '__main__':
     msg14={'corrid':'12134','type':'apply_result','msg':"New policy created","status":"done"}
     msg15={'corrid':'1236','type':'red_flag','msg':"New policy created","status":"done"}
     msg16={'corrid':'1237','type':'new_policy','msg':"New policy created","status":"done"}
-    #pending only
+
     msg17={'corrid':'12135','type':'new_policy','msg':"New policy created","status":"pending"}
     msg18={'corrid':'12135','type':'new_policy','msg':"New policy created","status":"pending"}
     msg19={'corrid':'12135','type':'new_policy','msg':"New policy created","status":"pending"}
     msg20={'corrid':'12135','type':'new_policy','msg':"New policy created","status":"pending"}
-
-    #done only
-
-    msg21={'corrid':'121351','type':'new_policy','msg':"New policy created","status":"done"}
-    msg22={'corrid':'121352','type':'new_policy','msg':"New policy created","status":"done"}
-    msg23={'corrid':'121353','type':'new_policy','msg':"New policy created","status":"done"}
-    msg24={'corrid':'121354','type':'new_policy','msg':"New policy created","status":"done"}
-
     messages=[]
-    messages=[msg1,msg2,msg3,msg4,msg5,msg6]
-    messages=messages+[msg11,msg12,msg13,msg14,msg15,msg16]
+    #messages=[msg1,msg2,msg3,msg4,msg5,msg6]
+    #messages=messages+[msg11,msg12,msg13,msg14,msg15,msg16]
     messages=messages+[msg17,msg18,msg19,msg20]
-    #messages=messages+[msg21,msg22,msg23,msg24]
     ls=[]
     #print(messages)
     for m in messages:
